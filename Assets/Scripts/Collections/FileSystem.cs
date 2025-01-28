@@ -4,35 +4,36 @@ using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
 
-public static class FileSystem
+namespace Collections
 {
-    public static T Load<T>(string fileName)
+    public static class FileSystem
     {
-        string filePath = Application.persistentDataPath + "/" + fileName;
-        if (File.Exists(filePath))
+        public static T Load<T>(string fileName)
         {
-            string jsonData = File.ReadAllText(filePath);
-            return JsonConvert.DeserializeObject<T>(jsonData);
+            var filePath = Application.persistentDataPath + "/" + fileName;
+            if (File.Exists(filePath))
+            {
+                var jsonData = File.ReadAllText(filePath);
+                return JsonConvert.DeserializeObject<T>(jsonData);
+            }
+
+            throw new Exception($"File Load Error : {filePath}");
         }
-        throw new Exception($"File Load Error : {filePath}");
-    }
 
-    public static bool Save<T>(string fileName, T saveData)
-    {
-        var jsonSaveData = JsonConvert.SerializeObject(saveData);
-        string filePath = Application.persistentDataPath + "/" + fileName;
-        Debug.Log(filePath);
-        File.WriteAllText(filePath, jsonSaveData);
-        return true;
-    }
-
-    public static String[] GetSaveFileNames()
-    {
-        string path = Application.persistentDataPath+"/";
-        if (Directory.Exists(path))
+        public static bool Save<T>(string fileName, T saveData)
         {
-            return Directory.GetFiles(path).Select(it => Path.GetFileName(it)).ToArray();
+            var jsonSaveData = JsonConvert.SerializeObject(saveData);
+            var filePath = Application.persistentDataPath + "/" + fileName;
+            Debug.Log(filePath);
+            File.WriteAllText(filePath, jsonSaveData);
+            return true;
         }
-        return Array.Empty<string>();
+
+        public static string[] GetSaveFileNames()
+        {
+            var path = Application.persistentDataPath + "/";
+            if (Directory.Exists(path)) return Directory.GetFiles(path).Select(it => Path.GetFileName(it)).ToArray();
+            return Array.Empty<string>();
+        }
     }
 }

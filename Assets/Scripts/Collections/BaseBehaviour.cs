@@ -8,7 +8,7 @@ namespace Collections
 {
     public class BaseBehaviour : MonoBehaviour
     {
-        private void OnEnable()
+        private void Awake()
         {
             InjectGetComponent();
             InjectGetChildrenComponent();
