@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Collections
 {
-    public sealed class BaseBehaviour : MonoBehaviour
+    public class BaseBehaviour : MonoBehaviour
     {
         private void OnEnable()
         {

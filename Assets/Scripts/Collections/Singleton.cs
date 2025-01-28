@@ -12,7 +12,7 @@ namespace Collections
             {
                 if (_instance == null)
                 {
-                    _instance = FindObjectOfType<T>();
+                    _instance = FindAnyObjectByType<T>();
 
                     if (_instance == null)
                     {
@@ -40,7 +40,7 @@ namespace Collections
             {
                 if (_instance == null)
                 {
-                    _instance = FindObjectOfType<T>();
+                    _instance = FindAnyObjectByType<T>();
                     if (_instance == null)
                     {
                         var go = new GameObject();
