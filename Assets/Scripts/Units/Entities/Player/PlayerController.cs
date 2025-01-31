@@ -7,6 +7,8 @@ namespace Units.Entities.Player
 {
     public class PlayerController : BaseBehaviour, IController
     {
+        [field: SerializeField] public bool IsPlayable { get; private set; }
+        [Inject] [CanBeNull] private ICamera _camera;
         [Inject] [CanBeNull] private IMovement _movement;
         [Inject] private PlayerInput _playerInput;
 
@@ -18,6 +20,11 @@ namespace Units.Entities.Player
             playerInputActions.Player.Move.started += OnMoveStarted;
             playerInputActions.Player.Move.performed += OnMovePerformed;
             playerInputActions.Player.Move.canceled += OnMoveCanceled;
+
+            playerInputActions.Player.Look.performed += context =>
+            {
+                _camera.RotateView(context.ReadValue<Vector2>());
+            };
         }
 
         // 입력이 시작되었을 때 호출
