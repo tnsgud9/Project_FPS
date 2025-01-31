@@ -1072,8 +1072,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a78dfa9981a5403f8362d6d0b061d515, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerBody: {fileID: 0}
-  mouseSensitivity: 100
+  mouseSensitivity: 10
+  <CameraTransform>k__BackingField: {fileID: 534829462}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

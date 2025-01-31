@@ -6,24 +6,22 @@ namespace Units.Entities.Player
     [RequireComponent(typeof(IController))]
     public class PlayerCamera : BaseBehaviour, ICamera
     {
-        [SerializeField] private float mouseSensitivity = 100f;
+        [SerializeField] private float mouseSensitivity = 10f;
 
         private float _xRotation;
+        [field: SerializeField] public Transform CameraTransform { get; set; }
+
 
         public void RotateView(Vector2 input)
         {
-            var mouseX = input.x;
-            var mouseY = input.y;
+            var mouseX = input.x * mouseSensitivity * Time.deltaTime;
+            var mouseY = input.y * mouseSensitivity * Time.deltaTime;
 
-            // X축 회전값을 제한
-            _xRotation -= mouseY * mouseSensitivity;
-            _xRotation = Mathf.Clamp(_xRotation, -90f, 90f);
+            _xRotation -= mouseY;
+            _xRotation = Mathf.Clamp(_xRotation, -90f, 90f); // 상하 회전 제한
 
-            // 카메라의 X축 회전 (위아래 회전)
-            transform.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
-
-            // 카메라의 Y축 회전 (좌우 회전)
-            transform.Rotate(Vector3.up * mouseX * mouseSensitivity);
+            CameraTransform.localRotation = Quaternion.Euler(_xRotation, 0f, 0f); // 카메라 상하 회전
+            transform.Rotate(Vector3.up * mouseX); // 플레이어 좌우 회전
         }
     }
 }

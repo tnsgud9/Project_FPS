@@ -23,7 +23,7 @@ namespace Units.Entities.Player
 
             playerInputActions.Player.Look.performed += context =>
             {
-                _camera.RotateView(context.ReadValue<Vector2>());
+                _camera?.RotateView(context.ReadValue<Vector2>());
             };
         }
 
