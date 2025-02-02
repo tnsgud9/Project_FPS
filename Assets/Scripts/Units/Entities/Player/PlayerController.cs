@@ -21,6 +21,9 @@ namespace Units.Entities.Player
             playerInputActions.Player.Move.performed += OnMovePerformed;
             playerInputActions.Player.Move.canceled += OnMoveCanceled;
 
+            playerInputActions.Player.Sprint.started += OnSprintStarted;
+            playerInputActions.Player.Sprint.canceled += OnSprintCanceled;
+
             playerInputActions.Player.Look.performed += context =>
             {
                 _camera?.RotateView(context.ReadValue<Vector2>());
@@ -46,6 +49,16 @@ namespace Units.Entities.Player
         {
             // 버튼을 떼면 멈추기
             _movement?.Move(Vector2.zero);
+        }
+
+        private void OnSprintStarted(InputAction.CallbackContext context)
+        {
+            if (_movement != null) _movement.Sprint = true;
+        }
+
+        private void OnSprintCanceled(InputAction.CallbackContext context)
+        {
+            if (_movement != null) _movement.Sprint = false;
         }
     }
 }
