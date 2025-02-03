@@ -42,7 +42,7 @@ namespace Units.Entities.Player
         {
             Debug.Log($"{_characterController.isGrounded} : {_velocity}");
             if (CheckGround() && _velocity.y < 0) _velocity.y = -2f; // 작은 값으로 지면에 붙도록 설정
-            _velocity += Physics.gravity * Time.deltaTime;
+            _velocity += gravity * Time.deltaTime;
             _characterController.Move(_velocity * Time.deltaTime);
         }
 
@@ -71,8 +71,9 @@ namespace Units.Entities.Player
 
         private Vector2 _inputDirection;
         private Vector3 _velocity;
-
+        
         [SerializeField] private LayerMask groundLayer;
+        [SerializeField] private Vector3 gravity = Physics.gravity;
 
         [field: SerializeField] public bool IsGrounded { get; private set; }
         [field: SerializeField] public float DefaultSpeed { get; set; } = 3f;
