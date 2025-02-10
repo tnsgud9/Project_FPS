@@ -30,11 +30,16 @@ namespace Utilities
             int layerMask = -5,
             QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
         {
-            hitInfo = default;
-            return UnityEngine.Physics
+            hitInfo = UnityEngine.Physics
                 .SphereCastAll(origin + -direction * radius, radius, direction, maxDistance + radius, layerMask,
                     queryTriggerInteraction)
-                .Any(hit => hit.collider != null && hit.point != Vector3.zero && hit.distance <= maxDistance);
+                .FirstOrDefault(hit =>
+                    hit.collider != null && hit.point != Vector3.zero && hit.distance <= maxDistance);
+            return hitInfo.collider != null;
+            UnityEngine.Physics
+                .SphereCastAll(origin + -direction * radius, radius, direction, maxDistance + radius, layerMask,
+                    queryTriggerInteraction)
+                .First(hit => hit.collider != null && hit.point != Vector3.zero && hit.distance <= maxDistance);
         }
     }
 }
