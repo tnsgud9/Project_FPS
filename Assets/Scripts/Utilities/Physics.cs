@@ -14,8 +14,10 @@ namespace Utilities
             QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
         {
             return UnityEngine.Physics
-                .SphereCastAll(origin, radius, direction, maxDistance, layerMask, queryTriggerInteraction)
-                .Where(hit => Vector3.Distance(origin, hit.point) <= maxDistance).ToArray();
+                .SphereCastAll(origin + -direction * radius, radius, direction, maxDistance + radius, layerMask,
+                    queryTriggerInteraction)
+                .Where(hit => hit.collider != null && hit.point != Vector3.zero && hit.distance <= maxDistance)
+                .ToArray();
         }
 
 
@@ -28,19 +30,11 @@ namespace Utilities
             int layerMask = -5,
             QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
         {
-            RaycastHit? hit = UnityEngine.Physics
-                .SphereCastAll(origin, radius, direction, maxDistance, layerMask, queryTriggerInteraction)
-                // .OrderBy(hit => hit.distance)
-                .FirstOrDefault(hit => Vector3.Distance(origin, hit.point) <= maxDistance);
-            if (hit != null)
-            {
-                hitInfo = (RaycastHit)hit;
-                return true;
-            }
             hitInfo = default;
-            return false;
+            return UnityEngine.Physics
+                .SphereCastAll(origin + -direction * radius, radius, direction, maxDistance + radius, layerMask,
+                    queryTriggerInteraction)
+                .Any(hit => hit.collider != null && hit.point != Vector3.zero && hit.distance <= maxDistance);
         }
-
-        
     }
 }
