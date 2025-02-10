@@ -1,4 +1,5 @@
 using Collections;
+using UnityEditor;
 using UnityEngine;
 
 namespace Units.Entities.Player
@@ -12,12 +13,6 @@ namespace Units.Entities.Player
             Gravity();
         }
 
-        private void OnDrawGizmos()
-        {
-            // Gizmos.color = CheckGround() ? Color.green : Color.red;
-            // Gizmos.DrawWireSphere(transform.position, _characterController.radius);
-        }
-
 
         public float CurrentSpeed => CalculateSpeed(); // Calculate Speed Logic
 
@@ -29,19 +24,22 @@ namespace Units.Entities.Player
 
         private void Movement()
         {
-            if (_inputDirection == Vector2.zero) return;
+            if (IsGrounded && _inputDirection == Vector2.zero) return;
 
             var moveDir = (_camera.CameraTransform.forward * _inputDirection.y +
                            _camera.CameraTransform.right * _inputDirection.x).normalized;
-            moveDir.y = 0; // 수직 이동 방지
 
             _characterController.Move(moveDir * (CurrentSpeed * Time.deltaTime));
         }
 
         private void Gravity()
         {
-            Debug.Log($"{_characterController.isGrounded} : {_velocity}");
-            if (CheckGround() && _velocity.y < 0) _velocity.y = -2f; // 작은 값으로 지면에 붙도록 설정
+            if (IsGrounded)
+            {
+                _velocity = Vector3.zero;
+                return;
+            }
+
             _velocity += gravity * Time.deltaTime;
             _characterController.Move(_velocity * Time.deltaTime);
         }
@@ -50,7 +48,24 @@ namespace Units.Entities.Player
 
         private bool CheckGround()
         {
-            return Physics.CheckSphere(transform.position, _characterController.radius, groundLayer);
+            return Utilities.Physics.CylinderCast(transform.position, GroundRadius, Vector3.down,
+                out _, _characterController.skinWidth);
+        }
+
+        private void OnDrawGizmos()
+        {
+            Handles.color = Color.green;
+            Handles.DrawWireDisc(transform.position, Vector3.down, GroundRadius);
+            _characterController = GetComponent<CharacterController>();
+            Handles.DrawWireDisc(transform.position + Vector3.down * _characterController.skinWidth, Vector3.down,
+                GroundRadius);
+
+            if (Utilities.Physics.CylinderCast(transform.position, GroundRadius, Vector3.down,
+                    out var hit, _characterController.skinWidth))
+            {
+                Handles.color = Color.red;
+                Handles.DrawWireDisc(transform.position + Vector3.down * hit.distance, Vector3.down, GroundRadius);
+            }
         }
 
         private float CalculateSpeed()
@@ -71,12 +86,14 @@ namespace Units.Entities.Player
 
         private Vector2 _inputDirection;
         private Vector3 _velocity;
-        
+
         [SerializeField] private LayerMask groundLayer;
         [SerializeField] private Vector3 gravity = Physics.gravity;
 
-        [field: SerializeField] public bool IsGrounded { get; private set; }
+        public bool IsGrounded => CheckGround();
+
         [field: SerializeField] public float DefaultSpeed { get; set; } = 3f;
+        [field: SerializeField] public float GroundRadius { get; set; } = 0.5f;
         [field: SerializeField] public bool Sprint { get; set; }
         [field: SerializeField] public float SprintMultiplier { get; set; } = 2f;
 
