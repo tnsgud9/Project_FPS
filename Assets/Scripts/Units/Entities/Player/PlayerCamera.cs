@@ -18,7 +18,7 @@ namespace Units.Entities.Player
             var mouseY = input.y * mouseSensitivity * Time.deltaTime;
 
             _xRotation -= mouseY;
-            _xRotation = Mathf.Clamp(_xRotation, -90f, 90f); // 상하 회전 제한
+            _xRotation = Mathf.Clamp(_xRotation, -89.99f, 89.99f); // 상하 회전 제한
 
             CameraTransform.localRotation = Quaternion.Euler(_xRotation, 0f, 0f); // 카메라 상하 회전
             transform.Rotate(Vector3.up * mouseX); // 플레이어 좌우 회전

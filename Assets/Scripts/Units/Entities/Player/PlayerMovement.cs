@@ -26,9 +26,22 @@ namespace Units.Entities.Player
         {
             if (IsGrounded && _inputDirection == Vector2.zero) return;
 
-            var moveDir = (_camera.CameraTransform.forward * _inputDirection.y +
-                           _camera.CameraTransform.right * _inputDirection.x).normalized;
+            // 카메라의 forward와 right 벡터에서 y축 성분을 제외하고 x, z 방향만 고려
+            var forward = _camera.CameraTransform.forward;
+            var right = _camera.CameraTransform.right;
 
+            // y축 성분을 0으로 설정하여 수평 방향만 사용
+            forward.y = 0;
+            right.y = 0;
+
+            // 벡터 정규화
+            forward.Normalize();
+            right.Normalize();
+
+            // 이동 방향 계산 (x, z 방향만 고려)
+            var moveDir = forward * _inputDirection.y + right * _inputDirection.x;
+
+            // 이동 방향에 따른 이동
             _characterController.Move(moveDir * (CurrentSpeed * Time.deltaTime));
         }
 
