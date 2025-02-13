@@ -25,7 +25,6 @@ namespace Units.Entities.Player
         private void Movement()
         {
             if (IsGrounded && _inputDirection == Vector2.zero) return;
-
             // 카메라의 forward와 right 벡터에서 y축 성분을 제외하고 x, z 방향만 고려
             var forward = _camera.CameraTransform.forward;
             var right = _camera.CameraTransform.right;
@@ -34,12 +33,22 @@ namespace Units.Entities.Player
             forward.y = 0;
             right.y = 0;
 
-            // 벡터 정규화
-            forward.Normalize();
-            right.Normalize();
-
             // 이동 방향 계산 (x, z 방향만 고려)
-            var moveDir = forward * _inputDirection.y + right * _inputDirection.x;
+            var moveDir = (forward * _inputDirection.y + right * _inputDirection.x).normalized;
+
+
+            // 경사 적용
+            if (Utilities.Physics.CylinderCast(transform.position, GroundRadius, Vector3.down,
+                    out var hit, _characterController.skinWidth))
+                // if (Physics.Raycast(transform.position, Vector3.down, out var hit, _characterController.height, groundLayer))
+            {
+                // 경사면을 따라 이동할 방향 계산
+                moveDir = Vector3.ProjectOnPlane(moveDir, hit.normal).normalized;
+
+                // Debug용 Ray 표시
+                Debug.DrawRay(hit.point, hit.normal * 2f, Color.green); // 법선 벡터
+                Debug.DrawRay(hit.point, moveDir * 2f, Color.red); // 경사 이동 방향
+            }
 
             // 이동 방향에 따른 이동
             _characterController.Move(moveDir * (CurrentSpeed * Time.deltaTime));
